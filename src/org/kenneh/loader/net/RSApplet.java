@@ -3,6 +3,7 @@ import java.applet.Applet;
 import java.applet.AppletContext;
 import java.applet.AppletStub;
 import java.awt.BorderLayout;
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -29,9 +30,9 @@ public class RSApplet extends JPanel implements AppletStub {
 	
 	@SuppressWarnings("resource")
 	public void start() throws Exception {
-		final String jar = params.get("codebase") + params.get("initial_jar");
-		log.debug("Downloading jar from " + jar);
-		final URLClassLoader classLoader = new URLClassLoader(new URL[] { new URL( jar) });
+		final File jar = new File(System.getProperty("java.io.tmpdir") + File.separator + "Runescape.jar");
+		log.debug("loading jar from " + jar);
+		final URLClassLoader classLoader = new URLClassLoader(new URL[] { jar.toURI().toURL() });
 		log.debug("Classloader created");
 		final String mainClass = params.get("initial_class").replaceAll(".class", "");
 		log.debug("Identified main class as " + mainClass);

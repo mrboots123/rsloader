@@ -79,6 +79,8 @@ public class GUI extends JFrame {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 
 		log.debug("Downloading parameters");
+		params.parse();
+		log.debug("Downloading jar");
 		params.download();
 		setTitle(params.get("title"));
 		try {
@@ -93,7 +95,7 @@ public class GUI extends JFrame {
 			setSize(780, 540);
 		} else {
 			log.debug("RS3 chosen, setting size to 940x660");
-			setSize(940, 660);
+			setSize(1170, 720);
 		}
 		
 		getContentPane().remove(imageLabel);

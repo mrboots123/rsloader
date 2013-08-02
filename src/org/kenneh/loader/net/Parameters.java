@@ -1,11 +1,15 @@
 package org.kenneh.loader.net;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -14,31 +18,31 @@ import org.kenneh.loader.utils.Logger;
 
 
 public class Parameters {
-	
+
 	private Map<String, String> params = new HashMap<>();
 	private boolean oldschool;
 	private Random random;
-	
+
 	private Logger log;
-	
+
 	public Parameters(boolean oldschool, Logger log) {
 		this.oldschool = oldschool;
 		this.random = new Random();
 		this.log = log;
 	}
-	
+
 	public String get(String key) {
 		return params.containsKey(key) ? params.get(key) : "";
 	}
-	
+
 	private void addParam(String key) {
 		addParam(key, "");
 	}
-	
+
 	private void addParam(String key, String value) {
 		params.put(key, value);
 	}
-	
+
 	private URLConnection getURLConnection(final boolean oldschoolscape) throws MalformedURLException, IOException {
 		final StringBuilder builder = new StringBuilder("http://");
 		builder.append(oldschool ? "oldschool" : "world");
@@ -52,7 +56,19 @@ public class Parameters {
 		return connection;
 	}
 
-	public boolean download() {
+	public void download() {
+		try {
+			URL website = new URL(params.get("codebase") + params.get("initial_jar"));
+			ReadableByteChannel rbc = Channels.newChannel(website.openStream());
+			FileOutputStream fos = new FileOutputStream(System.getProperty("java.io.tmpdir") + File.separator + "Runescape.jar");
+			fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+			fos.close();
+		} catch(Exception a) {
+			a.printStackTrace();
+		}
+	}
+
+	public boolean parse() {
 		try {
 			log.debug("Attempting to parse game parameters...");
 			final URLConnection connection = getURLConnection(oldschool);
